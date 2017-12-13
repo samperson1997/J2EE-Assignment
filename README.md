@@ -7,5 +7,5 @@ J2EE homework
 * 正常结果: 标准页面, 每一项订单包括多项属性(时间、名称、数量、价格), 分页显示
 * 未知的客户ID: 错误页面
 
-## Homework 1
+## Homework 1: order02
 * Servlet + Session + JDBC
