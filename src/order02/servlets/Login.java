@@ -26,7 +26,7 @@ public class Login extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         String login = "";
-        HttpSession session = request.getSession(true);
+        HttpSession session = request.getSession(false);
         Cookie[] cookies = request.getCookies();
 
         if (null != cookies) {

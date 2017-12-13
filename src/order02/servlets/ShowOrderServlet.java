@@ -25,6 +25,8 @@ import java.util.Properties;
 public class ShowOrderServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private DataSource datasource = null;
+    private int pageNow = 1;
+    private int pageCount;// 总共的页数，该变量是计算出来的
 
     /**
      * @see HttpServlet#HttpServlet()
@@ -107,7 +109,7 @@ public class ShowOrderServlet extends HttpServlet {
                 }
 
                 // create a session to show that we are logged in
-                session = req.getSession(true);
+                session = req.getSession(false);
                 session.setAttribute("login", loginValue);
 
                 req.setAttribute("login", loginValue);
@@ -136,9 +138,23 @@ public class ShowOrderServlet extends HttpServlet {
     private void getStockList(HttpServletRequest req, HttpServletResponse res) {
 
         Connection connection = null;
+        PreparedStatement prestmt;
+        ResultSet preresult;
         PreparedStatement stmt;
         ResultSet result;
         List<Order> list = new ArrayList<>();
+
+        // 三个变量先初始化
+        int pageSize = 5;// 指定每一页显示5条记录
+        int rowCount = 1;// 总共有多少条记录，该变量需要读取数据库得到
+        // 定义第四个变量，即当前要显示的页数，初始化为1
+
+        // 这个当前页是用户决定的，所以由用户请求参数来确定
+        // 这个参数是下文中<a>链接中的href传递过来的
+        String temp_pageNow = req.getParameter("pageNow");
+        if (temp_pageNow != null) {
+            pageNow = Integer.parseInt(temp_pageNow);
+        }
 
         try {
             connection = datasource.getConnection();
@@ -147,8 +163,20 @@ public class ShowOrderServlet extends HttpServlet {
         }
 
         try {
-            stmt = connection.prepareStatement("SELECT * FROM user_orders WHERE user_id = 1");
-//            stmt.setString(1, (String) req.getAttribute("login"));
+            prestmt = connection.prepareStatement("SELECT * FROM user_orders WHERE user_id = 1");
+//            prestmt.setString(1, req.getParameter("login"));
+            preresult = prestmt.executeQuery();
+            while (preresult.next()) {
+                rowCount++;//得到rowCount，总共多少条记录
+                // 得到总共有多少页：总共有rowCount条记录，每一页显示pageSize条记录
+            }
+            pageCount = (rowCount - 1) / pageSize + 1;
+
+            stmt = connection.prepareStatement("SELECT * FROM user_orders WHERE user_id = 1 LIMIT ?, 5");
+//            stmt.setString(1, req.getParameter("login"));
+
+            stmt.setInt(1, pageSize * pageNow - pageSize);
+
             result = stmt.executeQuery();
             while (result.next()) {
                 Order order = new Order();
@@ -160,6 +188,7 @@ public class ShowOrderServlet extends HttpServlet {
                 order.setIsAvailable(result.getInt("is_available"));
 
                 list.add(order);
+                System.out.println(">>>>>");
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -180,22 +209,48 @@ public class ShowOrderServlet extends HttpServlet {
     }
 
     private void displayMyStocklistPage(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        List list = (ArrayList) req.getAttribute("list"); // resp.sendRedirect(req.getContextPath()+"/MyStockList");
+        List list = (ArrayList) req.getAttribute("list");
 
         PrintWriter out = res.getWriter();
         out.println("<html><body>");
-        out.println("<p>Welcome, <i>Customer " + req.getAttribute("login") + "</i> !</p>");
-        out.println("<img src='" + req.getContextPath() + "/image/top.jpg' style=\"width: 20%\">");
+        out.println("<img src='" + req.getContextPath() + "/image/top.jpg' style=\"width: 30%; float: left;" +
+                "margin: 2% 5%\">");
 
+        out.println("<p>Welcome, <i>Customer " + req.getParameter("login") + "</i> !</p>");
         out.println("<p><b>Order List: </b></p>");
-        out.println("<table style=\"text-align: center\"><tr><th>Date</th><th>article</th><th>num</th><th>price</th></tr>");
+        out.println("<table style=\"text-align: center\"><tr><th>DATE</th><th>ARTICLE</th>" +
+                "<th>NUMBER</th><th>PRICE</th><th>STATE</th></tr>");
+
+        boolean hasUnavailable = false;
         for (Order order : (List<Order>) list) {
+            if (order.getIsAvailable() == 0) {
+                hasUnavailable = true;
+            }
             out.println("<tr><td>" + order.getDate() + "</td><td>");
             out.println(order.getArticleName() + "</td><td>");
             out.println(order.getArticleNum() + "</td><td>");
-            out.println(order.getPrice() + "</td></tr>");
+            out.println(order.getPrice() + "</td><td>");
+            out.println((order.getIsAvailable() == 0 ? "<i style=\"color: red\">out of stock</i>" : "normal") + "</td></tr>");
+        }
+
+        if (hasUnavailable) {
+            out.println("<i style=\"color: red\">ATTENTION: Some articles in your Order List are out of stock!</i>");
         }
         out.println("</table>");
+
+        // 显示上一页，注意href的写法
+        if (pageNow != 1) {
+            out.println("<a title='last page' href='/ShowOrderServlet?pageNow="
+                    + (pageNow - 1) + "'>last page</a>");
+        }
+
+        // 显示下一页
+        if (pageNow != pageCount) {
+            out.println("<a title='next page' href='/ShowOrderServlet?pageNow="
+                    + (pageNow + 1) + "'>next page</a>");
+        }
+        // 显示分页信息
+        out.println("&nbsp;&nbsp;&nbsp;current page: " + pageNow + "/total page: " + pageCount);
     }
 
 }
