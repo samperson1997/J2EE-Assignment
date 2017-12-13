@@ -16,7 +16,7 @@
     <schema id="10" parent="1" name="mysql"/>
     <schema id="11" parent="1" name="performance_schema"/>
     <schema id="12" parent="1" name="sys"/>
-    <table id="13" parent="2" name="orders"/>
+    <table id="13" parent="2" name="user_orders"/>
     <table id="14" parent="2" name="users"/>
     <column id="15" parent="13" name="order_id">
       <Position>1</Position>
@@ -44,7 +44,7 @@
       <DataType>double|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="20" parent="13" name="is_avalible">
+    <column id="20" parent="13" name="is_available">
       <Position>6</Position>
       <DataType>int(11)|0</DataType>
       <NotNull>1</NotNull>
