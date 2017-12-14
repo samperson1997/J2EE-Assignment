@@ -27,24 +27,11 @@ public class Login extends HttpServlet {
 
         String login = "";
         HttpSession session = request.getSession(false);
-        Cookie[] cookies = request.getCookies();
-
-        if (null != cookies) {
-            // Look through all the cookies and see if the
-            // cookie with the login info is there.
-            for (Cookie cookie1 : cookies) {
-                if (cookie1.getName().equals("LoginCookie")) {
-                    login = cookie1.getValue();
-                    break;
-                }
-            }
-        }
 
         // Logout action removes session, but the cookie remains
         if (null != request.getParameter("Logout")) {
             if (null != session) {
                 session.invalidate();
-                session = null;
             }
         }
 
@@ -53,9 +40,7 @@ public class Login extends HttpServlet {
         out.println("<html><body>");
 
         out.println(
-                "<form method='POST' action='"
-                        + response.encodeURL(request.getContextPath() + "/ShowOrderServlet")
-                        + "'>");
+                "<form method='POST'>");
         out.println(
                 "login: <input type='text' name='login' value='" + login + "'>");
         out.println(
@@ -63,13 +48,29 @@ public class Login extends HttpServlet {
         out.println("<input type='submit' name='Submit' value='Submit'>");
 
         out.println("</form></body></html>");
-
     }
 
     /**
      * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // match user and password
+
+        int userId = Integer.parseInt(request.getParameter("login"));
+//        request.getParameter("password")
+        HttpSession session = request.getSession(false);
+        if (null != session) {
+            session.invalidate();
+        }
+        session = request.getSession(true);
+        session.setAttribute("login", userId);
+        Cookie cookie = new Cookie("LoginCookie", session.getId());
+        cookie.setMaxAge(Integer.MAX_VALUE);
+        System.out.println("Add cookie");
+        response.addCookie(cookie);
+
+        response.sendRedirect(request.getContextPath()
+                + response.encodeURL(request.getContextPath() + "/ShowOrderServlet?pageNow=1"));
     }
 
 }
