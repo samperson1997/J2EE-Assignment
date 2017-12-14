@@ -78,25 +78,13 @@ public class ShowOrderServlet extends HttpServlet {
         HttpSession session = request.getSession(true);
         System.out.println(session.getAttribute("login") + " request");
 
-        if (session == null) {
-            String loginValue = String.valueOf(session.getAttribute("login"));
-            boolean isLoginAction = (null != loginValue);
+        String loginValue = String.valueOf(session.getAttribute("login"));
+        System.out.println(loginValue + " session");
 
-            System.out.println(loginValue + " session null");
-            if (!isLoginAction) { // User is logging in
-                response.sendRedirect(request.getContextPath() + "/Login");
-            }
-        } else {
-            String loginValue = String.valueOf(session.getAttribute("login"));
-            System.out.println(loginValue + " session");
-
-            request.setAttribute("login", loginValue);
-            getOrderList(request, response);
-            displayOrderPage(request, response);
-            displayLogoutPage(request, response);
-
-        }
-
+        request.setAttribute("login", loginValue);
+        getOrderList(request, response);
+        displayOrderPage(request, response);
+        displayLogoutPage(request, response);
     }
 
     private void getOrderList(HttpServletRequest request, HttpServletResponse response) {
@@ -162,6 +150,7 @@ public class ShowOrderServlet extends HttpServlet {
 
     private void displayLogoutPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
         PrintWriter out = response.getWriter();
+
         out.println("<form method='GET' action='" + response.encodeURL(request.getContextPath() + "/Login") + "'>");
         out.println("</p>");
         out.println("<input type='submit' name='Logout' value='Logout'>");
