@@ -21,7 +21,6 @@ import java.util.Properties;
 public class Login extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private DataSource datasource = null;
-    private boolean isCorrectPassword = false;
 
     /**
      * @see HttpServlet#HttpServlet()
@@ -79,6 +78,7 @@ public class Login extends HttpServlet {
         Connection connection;
         PreparedStatement stmt;
         ResultSet result;
+        boolean isCorrectPassword = false;
 
         HttpSession session = request.getSession(false);
         if (null != session) {
@@ -99,6 +99,7 @@ public class Login extends HttpServlet {
                 System.out.println("wrong password");
                 displayWrongPage(request, response);
             }
+            connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }

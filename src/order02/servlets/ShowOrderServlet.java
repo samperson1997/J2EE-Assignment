@@ -140,6 +140,7 @@ public class ShowOrderServlet extends HttpServlet {
 
                 list.add(order);
             }
+            connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
