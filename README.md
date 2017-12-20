@@ -9,3 +9,8 @@ J2EE homework
 
 ## Homework 1: order02
 * Servlet + Session + JDBC
+
+## Homework 2: order02
+* 基于Homework 1
+* 使用过滤器解决表单中的中文请求后的乱码问题
+* 统计在线人数：总人数、已登录人数、游客人数

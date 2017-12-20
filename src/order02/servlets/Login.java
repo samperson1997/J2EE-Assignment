@@ -67,7 +67,7 @@ public class Login extends HttpServlet {
                 "password: <input type='password' name='password' value=''>");
         out.println("<input type='submit' name='Submit' value='Submit'>");
 
-        out.println("</form></body></html>");
+        out.println("</form>当前在线总人数, 已登录人数, 游客人数</body></html>");
     }
 
     /**

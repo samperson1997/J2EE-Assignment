@@ -29,7 +29,7 @@ public class ShowOrderServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private DataSource datasource = null;
     private int pageNow = 1;
-    private int pageCount;// ×Ü¹²µÄÒ³Êı£¬¸Ã±äÁ¿ÊÇ¼ÆËã³öÀ´µÄ
+    private int pageCount;
 
     /**
      * @see HttpServlet#HttpServlet()
@@ -96,13 +96,9 @@ public class ShowOrderServlet extends HttpServlet {
         ResultSet result;
         List<Order> list = new ArrayList<>();
 
-        // Èı¸ö±äÁ¿ÏÈ³õÊ¼»¯
-        int pageSize = 5;// Ö¸¶¨Ã¿Ò»Ò³ÏÔÊ¾5Ìõ¼ÇÂ¼
-        int rowCount = 1;// ×Ü¹²ÓĞ¶àÉÙÌõ¼ÇÂ¼£¬¸Ã±äÁ¿ĞèÒª¶ÁÈ¡Êı¾İ¿âµÃµ½
-        // ¶¨ÒåµÚËÄ¸ö±äÁ¿£¬¼´µ±Ç°ÒªÏÔÊ¾µÄÒ³Êı£¬³õÊ¼»¯Îª1
+        int pageSize = 5;
+        int rowCount = 1;
 
-        // Õâ¸öµ±Ç°Ò³ÊÇÓÃ»§¾ö¶¨µÄ£¬ËùÒÔÓÉÓÃ»§ÇëÇó²ÎÊıÀ´È·¶¨
-        // Õâ¸ö²ÎÊıÊÇÏÂÎÄÖĞ<a>Á´½ÓÖĞµÄhref´«µİ¹ıÀ´µÄ
         String temp_pageNow = request.getParameter("pageNow");
         if (temp_pageNow != null) {
             pageNow = Integer.parseInt(temp_pageNow);
@@ -119,8 +115,7 @@ public class ShowOrderServlet extends HttpServlet {
             prestmt.setString(1, String.valueOf(request.getAttribute("login")));
             preresult = prestmt.executeQuery();
             while (preresult.next()) {
-                rowCount++;//µÃµ½rowCount£¬×Ü¹²¶àÉÙÌõ¼ÇÂ¼
-                // µÃµ½×Ü¹²ÓĞ¶àÉÙÒ³£º×Ü¹²ÓĞrowCountÌõ¼ÇÂ¼£¬Ã¿Ò»Ò³ÏÔÊ¾pageSizeÌõ¼ÇÂ¼
+                rowCount++;
             }
             pageCount = (rowCount - 1) / pageSize + 1;
 
@@ -190,19 +185,18 @@ public class ShowOrderServlet extends HttpServlet {
         }
         out.println("</table>");
 
-        // ÏÔÊ¾ÉÏÒ»Ò³
         if (pageNow != 1) {
             out.println("<a href='" + response.encodeURL(request.getContextPath() + "/ShowOrderServlet?pageNow="
                     + (pageNow - 1)) + "'>last page</a>");
         }
 
-        // ÏÔÊ¾ÏÂÒ»Ò³
         if (pageNow != pageCount) {
             out.println("<a href='" + response.encodeURL(request.getContextPath() + "/ShowOrderServlet?pageNow="
                     + (pageNow + 1)) + "'>next page</a>");
         }
-        // ÏÔÊ¾·ÖÒ³ĞÅÏ¢
-        out.println("&nbsp;&nbsp;current page: " + pageNow + "/total page: " + pageCount);
+
+        out.println("&nbsp;&nbsp;current page: " + pageNow + "/total page: " + pageCount + "</br>");
+        out.println("å½“å‰åœ¨çº¿æ€»äººæ•°, å·²ç™»å½•äººæ•°, æ¸¸å®¢äººæ•°");
     }
 
 }
