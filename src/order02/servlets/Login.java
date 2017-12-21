@@ -2,6 +2,7 @@ package order02.servlets;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
@@ -55,6 +56,11 @@ public class Login extends HttpServlet {
             session.invalidate();
         }
 
+        // 用户访问就建立session
+        System.out.println("login do get");
+        session = request.getSession(true);
+        session.removeAttribute("login");
+
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
         out.println("<html><body>");
@@ -67,7 +73,14 @@ public class Login extends HttpServlet {
                 "password: <input type='password' name='password' value=''>");
         out.println("<input type='submit' name='Submit' value='Submit'>");
 
-        out.println("</form>当前在线总人数, 已登录人数, 游客人数</body></html>");
+        ServletContext Context = getServletContext();
+
+        int visitorNum = (Integer) Context.getAttribute("VisitorCount");
+        int loginNum = (Integer) Context.getAttribute("OnlineCount");
+        int totalNum = visitorNum + loginNum;
+        out.println("</form>当前在线总人数: " + totalNum + "人, 已登录人数: " + loginNum + "人, 游客人数: " +
+                visitorNum + "人</body></html>");
+
     }
 
     /**
@@ -81,9 +94,9 @@ public class Login extends HttpServlet {
         boolean isCorrectPassword = false;
 
         HttpSession session = request.getSession(false);
-        if (null != session) {
-            session.invalidate();
-        }
+//        if (null != session) {
+//            session.invalidate();
+//        }
 
         try {
             connection = datasource.getConnection();
@@ -107,7 +120,7 @@ public class Login extends HttpServlet {
         if (isCorrectPassword) {
             int userId = Integer.parseInt(request.getParameter("login"));
 
-            session = request.getSession(true);
+//            session = request.getSession(true);
             session.setAttribute("login", userId);
             Cookie cookie = new Cookie("LoginCookie", session.getId());
             cookie.setMaxAge(Integer.MAX_VALUE);
@@ -126,7 +139,7 @@ public class Login extends HttpServlet {
             session.invalidate();
         }
 
-        out.println("<html><body><p>Wrong userid or password!</p>");
+        out.println("<html><body><p>Wrong user id or password!</p>");
         out.println("<form method='GET' action='" + response.encodeURL(request.getContextPath() + "/Login") + "'>");
         out.println("</p>");
         out.println("<input type='submit' name='return' value='return'>");

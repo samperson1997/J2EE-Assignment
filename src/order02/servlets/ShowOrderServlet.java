@@ -4,6 +4,7 @@ import order02.model.Order;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -147,6 +148,7 @@ public class ShowOrderServlet extends HttpServlet {
     private void displayLogoutPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
         PrintWriter out = response.getWriter();
 
+        HttpSession session = request.getSession(false);
         out.println("<form method='GET' action='" + response.encodeURL(request.getContextPath() + "/Login") + "'>");
         out.println("</p>");
         out.println("<input type='submit' name='Logout' value='Logout'>");
@@ -196,7 +198,14 @@ public class ShowOrderServlet extends HttpServlet {
         }
 
         out.println("&nbsp;&nbsp;current page: " + pageNow + "/total page: " + pageCount + "</br>");
-        out.println("当前在线总人数, 已登录人数, 游客人数");
+
+        ServletContext Context = getServletContext();
+
+        int visitorNum = (Integer) Context.getAttribute("VisitorCount");
+        int loginNum = (Integer) Context.getAttribute("OnlineCount");
+        int totalNum = visitorNum + loginNum;
+        out.println("当前在线总人数: " + totalNum + "人, 已登录人数: " + loginNum + "人, 游客人数: " +
+                visitorNum + "人");
     }
 
 }
