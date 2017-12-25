@@ -1,6 +1,6 @@
-package order02.servlets;
+package servlets;
 
-import order02.model.Order;
+import order.model.Order;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;

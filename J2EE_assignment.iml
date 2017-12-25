@@ -41,5 +41,6 @@
     <orderEntry type="library" exported="" name="standard-1.1.2" level="project" />
     <orderEntry type="library" exported="" name="servlet-api" level="project" />
     <orderEntry type="library" name="mysql-connector-java-5.1.45-bin" level="project" />
+    <orderEntry type="library" name="jsp-api" level="project" />
   </component>
 </module>

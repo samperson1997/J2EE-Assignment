@@ -1,4 +1,4 @@
-package order02.model;
+package model;
 
 import java.io.Serializable;
 import java.sql.Date;

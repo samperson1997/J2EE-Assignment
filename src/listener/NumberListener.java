@@ -1,4 +1,4 @@
-package order02.Listener;
+package listener;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -10,7 +10,7 @@ import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
 @WebListener
-public class numberListener implements HttpSessionListener, HttpSessionAttributeListener, ServletContextListener {
+public class NumberListener implements HttpSessionListener, HttpSessionAttributeListener, ServletContextListener {
     private ServletContext context;
     private Integer visitorCount;
 
