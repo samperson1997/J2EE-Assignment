@@ -15,7 +15,6 @@ import java.util.Properties;
 public class DaoHelperImpl implements DaoHelper {
     private static DaoHelperImpl baseDao = new DaoHelperImpl();
 
-    private InitialContext jndiContext = null;
     private Connection connection = null;
     private DataSource datasource = null;
 
@@ -26,7 +25,7 @@ public class DaoHelperImpl implements DaoHelper {
                 "org.apache.naming.java.javaURLContextFactory");
 
         try {
-            jndiContext = new InitialContext(properties);
+            InitialContext jndiContext = new InitialContext(properties);
             datasource = (DataSource) jndiContext.lookup("java:comp/env/jdbc/ORDERS");
         } catch (NamingException e) {
             e.printStackTrace();

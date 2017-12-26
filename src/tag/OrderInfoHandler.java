@@ -11,19 +11,26 @@ public class OrderInfoHandler extends SimpleTagSupport {
     public void doTag() throws JspException, IOException {
 
         try {
-            OrderListBean listStock = (OrderListBean) getJspContext().findAttribute("listStock");
+            boolean hasUnavailable = false;
+            OrderListBean listOrder = (OrderListBean) getJspContext().findAttribute("orderList");
             JspWriter out = getJspContext().getOut();
-            for (int i = 0; i < listStock.getOrderList().size(); i++) {
+            for (int i = 0; i < listOrder.getOrderList().size(); i++) {
+                if (listOrder.getOrderList(i).getIsAvailable() == 0) {
+                    hasUnavailable = true;
+                }
                 out.println("<tr><TD align='center'>"
-                        + listStock.getOrderList(i).getId() + "</TD>");
-//                out.println("<TD align='center'>"
-//                        + listStock.getOrderList(i).getCompanyName() + "</TD>");
-//                out.println("<TD align='center'>"
-//                        + listStock.getOrderList(i).getType() + "</TD>");
+                        + listOrder.getOrderList(i).getDate() + "</TD>");
                 out.println("<TD align='center'>"
-                        + listStock.getOrderList(i).getPrice() + "</TD>");
+                        + listOrder.getOrderList(i).getArticleName() + "</TD>");
                 out.println("<TD align='center'>"
-                        + listStock.getOrderList(i).getDate() + "</TD></tr>");
+                        + listOrder.getOrderList(i).getArticleNum() + "</TD>");
+                out.println("<TD align='center'>"
+                        + listOrder.getOrderList(i).getPrice() + "</TD>");
+                out.println("<TD align='center'>"
+                        + (listOrder.getOrderList(i).getIsAvailable() == 0 ? "<i style=\"color: red\">out of stock</i>" : "normal") + "</TD></tr>");
+            }
+            if (hasUnavailable) {
+                out.println("<i style=\"color: red\">ATTENTION: Some articles in your Order List are out of stock!</i>");
             }
         } catch (Exception e) {
             e.printStackTrace();

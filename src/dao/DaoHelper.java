@@ -4,13 +4,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-public interface DaoHelper 
-{
-	public Connection getConnection();
+public interface DaoHelper {
+    Connection getConnection();
 
-	public void closeConnection(Connection con);
+    void closeConnection(Connection con);
 
-	public void closePreparedStatement(PreparedStatement stmt);
+    void closePreparedStatement(PreparedStatement stmt);
 
-	public void closeResult(ResultSet result);
+    void closeResult(ResultSet result);
 }
