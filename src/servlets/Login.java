@@ -119,8 +119,6 @@ public class Login extends HttpServlet {
 
         if (isCorrectPassword) {
             int userId = Integer.parseInt(request.getParameter("login"));
-
-//            session = request.getSession(true);
             session.setAttribute("login", userId);
             Cookie cookie = new Cookie("LoginCookie", session.getId());
             cookie.setMaxAge(Integer.MAX_VALUE);

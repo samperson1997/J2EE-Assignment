@@ -2,6 +2,7 @@ package daoImpl;
 
 import dao.DaoHelper;
 import dao.OrderDao;
+import model.Order;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,7 +16,7 @@ public class OrderDaoImpl implements OrderDao {
     private static OrderDaoImpl orderDao = new OrderDaoImpl();
     private static DaoHelper daoHelper = DaoHelperImpl.getBaseDaoInstance();
 
-    private OrderDaoImpl() {
+    public OrderDaoImpl() {
 
     }
 
@@ -24,16 +25,50 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public List find(String column, String value) {
+    public int findTotalOrder(String id) {
         Connection con = daoHelper.getConnection();
         PreparedStatement stmt = null;
         ResultSet result = null;
-        ArrayList list = new ArrayList();
+        int total = 1;
         try {
-            stmt = con.prepareStatement("SELECT * FROM stock");
+            stmt = con.prepareStatement("SELECT * FROM user_orders WHERE user_id = ?");
+            stmt.setString(1, id);
             result = stmt.executeQuery();
             while (result.next()) {
-                // ……
+                total++;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            daoHelper.closeConnection(con);
+            daoHelper.closePreparedStatement(stmt);
+            daoHelper.closeResult(result);
+        }
+        return total;
+    }
+
+    @Override
+    public List findOrder(String id, int start) {
+        Connection con = daoHelper.getConnection();
+        PreparedStatement stmt = null;
+        ResultSet result = null;
+        List<Order> list = new ArrayList<>();
+        try {
+            stmt = con.prepareStatement("SELECT * FROM user_orders WHERE user_id = ? LIMIT ?, 5");
+            stmt.setString(1, id);
+            stmt.setInt(2, start);
+
+            result = stmt.executeQuery();
+            while (result.next()) {
+                Order order = new Order();
+                order.setId(result.getInt("order_id"));
+                order.setDate(result.getDate("order_date"));
+                order.setArticleName(result.getString("article_name"));
+                order.setArticleNum(result.getDouble("article_num"));
+                order.setPrice(result.getDouble("price"));
+                order.setIsAvailable(result.getInt("is_available"));
+
+                list.add(order);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -43,15 +78,5 @@ public class OrderDaoImpl implements OrderDao {
             daoHelper.closeResult(result);
         }
         return list;
-    }
-
-    @Override
-    public List find(String name) {
-        return null;
-    }
-
-    @Override
-    public List find() {
-        return null;
     }
 }

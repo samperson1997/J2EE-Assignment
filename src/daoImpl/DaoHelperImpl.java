@@ -27,7 +27,7 @@ public class DaoHelperImpl implements DaoHelper {
 
         try {
             jndiContext = new InitialContext(properties);
-            datasource = (DataSource) jndiContext.lookup("java:comp/env/jdbc/orders");
+            datasource = (DataSource) jndiContext.lookup("java:comp/env/jdbc/ORDERS");
         } catch (NamingException e) {
             e.printStackTrace();
         }

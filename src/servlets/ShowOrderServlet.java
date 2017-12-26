@@ -1,9 +1,11 @@
 package servlets;
 
-import order.model.Order;
+import dao.OrderDao;
+import daoImpl.OrderDaoImpl;
+import model.Order;
+import service.OrderService;
+import serviceImpl.OrderServiceImpl;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,13 +16,8 @@ import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * Servlet implementation class OrderListServlet
@@ -31,6 +28,7 @@ public class ShowOrderServlet extends HttpServlet {
     private DataSource datasource = null;
     private int pageNow = 1;
     private int pageCount;
+    private OrderService orderService;
 
     /**
      * @see HttpServlet#HttpServlet()
@@ -40,19 +38,7 @@ public class ShowOrderServlet extends HttpServlet {
     }
 
     public void init() {
-        InitialContext jndiContext;
-
-        Properties properties = new Properties();
-        properties.put(javax.naming.Context.PROVIDER_URL, "jnp:///");
-        properties.put(javax.naming.Context.INITIAL_CONTEXT_FACTORY, "org.apache.naming.java.javaURLContextFactory");
-        try {
-            jndiContext = new InitialContext(properties);
-            datasource = (DataSource) jndiContext.lookup("java:comp/env/jdbc/ORDERS");
-            System.out.println("got context");
-            System.out.println("About to get ds---ShowOrders");
-        } catch (NamingException e) {
-            e.printStackTrace();
-        }
+        orderService = new OrderServiceImpl();
 
     }
 
@@ -90,56 +76,17 @@ public class ShowOrderServlet extends HttpServlet {
 
     private void getOrderList(HttpServletRequest request, HttpServletResponse response) {
 
-        Connection connection = null;
-        PreparedStatement prestmt;
-        ResultSet preresult;
-        PreparedStatement stmt;
-        ResultSet result;
-        List<Order> list = new ArrayList<>();
-
         int pageSize = 5;
-        int rowCount = 1;
-
         String temp_pageNow = request.getParameter("pageNow");
         if (temp_pageNow != null) {
             pageNow = Integer.parseInt(temp_pageNow);
         }
 
-        try {
-            connection = datasource.getConnection();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        int rowCount = orderService.findTotalOrder(String.valueOf(request.getAttribute("login")));
+        pageCount = (rowCount - 1) / pageSize + 1;
 
-        try {
-            prestmt = connection.prepareStatement("SELECT * FROM user_orders WHERE user_id = ?");
-            prestmt.setString(1, String.valueOf(request.getAttribute("login")));
-            preresult = prestmt.executeQuery();
-            while (preresult.next()) {
-                rowCount++;
-            }
-            pageCount = (rowCount - 1) / pageSize + 1;
-
-            stmt = connection.prepareStatement("SELECT * FROM user_orders WHERE user_id = ? LIMIT ?, 5");
-            stmt.setString(1, String.valueOf(request.getAttribute("login")));
-            stmt.setInt(2, pageSize * pageNow - pageSize);
-
-            result = stmt.executeQuery();
-            while (result.next()) {
-                Order order = new Order();
-                order.setId(result.getInt("order_id"));
-                order.setDate(result.getDate("order_date"));
-                order.setArticleName(result.getString("article_name"));
-                order.setArticleNum(result.getDouble("article_num"));
-                order.setPrice(result.getDouble("price"));
-                order.setIsAvailable(result.getInt("is_available"));
-
-                list.add(order);
-            }
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        List<Order> list = orderService.findOrder(String.valueOf(request.getAttribute("login")),
+                pageSize * pageNow - pageSize);
 
         request.setAttribute("list", list);
 

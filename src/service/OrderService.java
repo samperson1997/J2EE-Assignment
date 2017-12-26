@@ -1,9 +1,8 @@
-package dao;
+package service;
 
 import java.util.List;
 
-public interface OrderDao {
-
+public interface OrderService {
     int findTotalOrder(String id);
 
     List findOrder(String id, int start);

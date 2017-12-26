@@ -17,7 +17,11 @@ J2EE homework
 
 ## Homework 4
 * 基于Homework 3
-* 基于MVC、DAO、Service等设计
+### 基于MVC、DAO、Service等设计
 * Model: JavaBean(ServiceFactory, XXXService; DAOFactory，XXXDAO)
 * View: JSP
 * Controller: Servlet
+
+### 验证用户状态
+* 已登录用户可访问，未登录用户转向登录页面
+* 用户通过URL直接访问XXXServlet或XXX.JSP时
