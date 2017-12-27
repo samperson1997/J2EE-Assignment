@@ -45,20 +45,25 @@ public class NumberListener implements HttpSessionListener, HttpSessionAttribute
 
     @Override
     public void attributeAdded(HttpSessionBindingEvent se) {
-        System.out.println("增加attribute，人数加1");
-        Integer onlineCount = (Integer) context.getAttribute("OnlineCount");
-        onlineCount++;
-        visitorCount--;
-        context.setAttribute("VisitorCount", visitorCount);
-        context.setAttribute("OnlineCount", onlineCount);
+        if(se.getName().equals("login")){
+            System.out.println("增加attribute，人数加1");
+            Integer onlineCount = (Integer) context.getAttribute("OnlineCount");
+            onlineCount++;
+            visitorCount--;
+            context.setAttribute("VisitorCount", visitorCount);
+            context.setAttribute("OnlineCount", onlineCount);
+        }
+
     }
 
     @Override
     public void attributeRemoved(HttpSessionBindingEvent se) {
-        Integer onlineCount = (Integer) context.getAttribute("OnlineCount");
-        onlineCount--;
-        visitorCount++;
-        context.setAttribute("VisitorCount", visitorCount);
-        context.setAttribute("OnlineCount", onlineCount);
+        if(se.getName().equals("login")) {
+            Integer onlineCount = (Integer) context.getAttribute("OnlineCount");
+            onlineCount--;
+            visitorCount++;
+            context.setAttribute("VisitorCount", visitorCount);
+            context.setAttribute("OnlineCount", onlineCount);
+        }
     }
 }

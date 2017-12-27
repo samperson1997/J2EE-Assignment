@@ -15,7 +15,6 @@
 <jsp:useBean id="orderList"
              type="model.OrderListBean"
              scope="session"/>
-<jsp:useBean id="item" class="model.Order"/>
 
 <table width="50%" border="0" cellpadding="0" cellspacing="1">
     <TBODY>
@@ -30,7 +29,21 @@
     </TBODY>
 </table>
 
-<jsp:include page="numberStatistics.jsp" />
+<%
+    int pageNow = (Integer) session.getAttribute("pageNow");
+    int pageCount = (Integer) session.getAttribute("pageCount");
+    if (pageNow != 1) {
+%>
+<a href='<%=response.encodeURL(request.getContextPath())%>/ShowOrderServlet?pageNow=<%=pageNow - 1%>'>last page</a>
+<%}%>
+<%if (pageNow != pageCount) {%>
+<a href='<%=response.encodeURL(request.getContextPath())%>/ShowOrderServlet?pageNow=<%=pageNow + 1%>'>next page</a>
+<%}%>
+
+&nbsp;&nbsp;current page: <%=pageNow%> / total page: <%=pageCount%>
+<br>
+
+<jsp:include page="numberStatistics.jsp"/>
 <form method='GET' action='<%=response.encodeURL(request.getContextPath())%>/Login'>
     <input type='submit' name='logout' value='logout'>
 </form>
