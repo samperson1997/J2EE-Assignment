@@ -8,6 +8,8 @@
 </head>
 
 <BODY>
+<order:checkSession response="<%=response%>"/>
+
 <img src='<%=request.getContextPath() + "/image/top.jpg"%>' style="width: 30%; float: left; margin: 2% 5%">
 <p>Welcome, <i>Customer <%=request.getAttribute("login")%>
 </i> !</p>

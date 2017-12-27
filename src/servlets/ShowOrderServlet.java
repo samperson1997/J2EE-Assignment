@@ -51,13 +51,21 @@ public class ShowOrderServlet extends HttpServlet {
     private void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         HttpSession session = request.getSession(false);
-        System.out.println(session.getAttribute("login") + " request");
 
-        String loginValue = String.valueOf(session.getAttribute("login"));
-        System.out.println(loginValue + " session");
-
-        request.setAttribute("login", loginValue);
-        getOrderList(request, response);
+        if (session == null || session.getAttribute("login") == null) {
+            ServletContext context = getServletContext();
+            try {
+                context.getRequestDispatcher("/Login").forward(request, response);
+            } catch (ServletException | IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println(session.getAttribute("login") + " request");
+            String loginValue = String.valueOf(session.getAttribute("login"));
+            System.out.println(loginValue + " session");
+            request.setAttribute("login", loginValue);
+            getOrderList(request, response);
+        }
     }
 
     private void getOrderList(HttpServletRequest request, HttpServletResponse response) {

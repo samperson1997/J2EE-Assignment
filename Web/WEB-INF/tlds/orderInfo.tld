@@ -10,4 +10,15 @@
         <tag-class>tag.OrderInfoHandler</tag-class>
         <body-content>empty</body-content>
     </tag>
+    <tag>
+        <name>checkSession</name>
+        <tag-class>tag.checkSessionHandler</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>response</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>javax.servlet.http.HttpServletResponse</type>
+        </attribute>
+    </tag>
 </taglib>
