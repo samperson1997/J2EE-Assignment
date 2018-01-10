@@ -1,20 +1,20 @@
 package daoImpl;
 
-import dao.DaoHelper;
 import dao.UserDao;
+import model.User;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.List;
 
 public class UserDaoImpl implements UserDao {
 
     private static UserDaoImpl userDao = new UserDaoImpl();
-    private static DaoHelper daoHelper = DaoHelperImpl.getBaseDaoInstance();
+    private HibernateUtil hibernateUtil;
 
     public UserDaoImpl() {
-
+        hibernateUtil = new HibernateUtil();
     }
 
     public static UserDaoImpl getInstance() {
@@ -23,23 +23,16 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public String getPassword(String id) {
-        Connection con = daoHelper.getConnection();
-        PreparedStatement stmt = null;
-        ResultSet result = null;
-        String res = null;
-        try {
-            stmt = con.prepareStatement("SELECT password FROM users WHERE user_id = ?");
-            stmt.setString(1, id);
-            result = stmt.executeQuery();
-            result.next();
-            res = result.getString(1);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            daoHelper.closeConnection(con);
-            daoHelper.closePreparedStatement(stmt);
-            daoHelper.closeResult(result);
-        }
-        return res;
+        Session session = hibernateUtil.getSession();
+
+        Transaction tx = session.beginTransaction();
+
+        String hql = "from model.User as us where us.userId = " + id;
+        Query query = session.createQuery(hql);
+        List<User> users = query.list();
+
+        tx.commit();
+
+        return users.get(0).getPassword();
     }
 }

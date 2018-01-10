@@ -19,7 +19,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List findOrder(String id, int start) {
-        return DaoFactory.getOrderDao().findOrder(id, start);
+    public List findOrder(String id, int start, int pageSize) {
+        return DaoFactory.getOrderDao().findOrder(id, start, pageSize);
     }
 }

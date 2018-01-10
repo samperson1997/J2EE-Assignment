@@ -1,23 +1,20 @@
 package daoImpl;
 
-import dao.DaoHelper;
 import dao.OrderDao;
 import model.Order;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class OrderDaoImpl implements OrderDao {
 
     private static OrderDaoImpl orderDao = new OrderDaoImpl();
-    private static DaoHelper daoHelper = DaoHelperImpl.getBaseDaoInstance();
+    private HibernateUtil hibernateUtil;
 
     public OrderDaoImpl() {
-
+        hibernateUtil = new HibernateUtil();
     }
 
     public static OrderDaoImpl getInstance() {
@@ -26,57 +23,30 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public int findTotalOrder(String id) {
-        Connection con = daoHelper.getConnection();
-        PreparedStatement stmt = null;
-        ResultSet result = null;
-        int total = 1;
-        try {
-            stmt = con.prepareStatement("SELECT * FROM user_orders WHERE user_id = ?");
-            stmt.setString(1, id);
-            result = stmt.executeQuery();
-            while (result.next()) {
-                total++;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            daoHelper.closeConnection(con);
-            daoHelper.closePreparedStatement(stmt);
-            daoHelper.closeResult(result);
-        }
-        return total;
+        Session session = hibernateUtil.getSession();
+
+        Transaction tx = session.beginTransaction();
+
+        String hql = "from model.Order as o where o.userId = " + id;
+        Query query = session.createQuery(hql);
+        List<Order> list = query.list();
+
+        tx.commit();
+        return list.size();
     }
 
     @Override
-    public List findOrder(String id, int start) {
-        Connection con = daoHelper.getConnection();
-        PreparedStatement stmt = null;
-        ResultSet result = null;
-        List<Order> list = new ArrayList<>();
-        try {
-            stmt = con.prepareStatement("SELECT * FROM user_orders WHERE user_id = ? LIMIT ?, 5");
-            stmt.setString(1, id);
-            stmt.setInt(2, start);
+    public List findOrder(String id, int start, int pageSize) {
+        Session session = hibernateUtil.getSession();
+        Transaction tx = session.beginTransaction();
 
-            result = stmt.executeQuery();
-            while (result.next()) {
-                Order order = new Order();
-                order.setId(result.getInt("order_id"));
-                order.setDate(result.getDate("order_date"));
-                order.setArticleName(result.getString("article_name"));
-                order.setArticleNum(result.getDouble("article_num"));
-                order.setPrice(result.getDouble("price"));
-                order.setIsAvailable(result.getInt("is_available"));
+        String hql = "SELECT * FROM user_orders WHERE user_id = " + id + " LIMIT " + start + ", " + pageSize;
+        Query query = session.createNativeQuery(hql, Order.class);
+        List<Order> list = query.getResultList()
+                ;
 
-                list.add(order);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            daoHelper.closeConnection(con);
-            daoHelper.closePreparedStatement(stmt);
-            daoHelper.closeResult(result);
-        }
+        tx.commit();
+
         return list;
     }
 }

@@ -25,3 +25,18 @@ J2EE homework
 ### 验证用户状态
 * 已登录用户可访问，未登录用户转向登录页面
 * 用户通过URL直接访问XXXServlet或XXX.JSP时
+
+## Homework 5
+* 基于Homework 4
+* Service层、DAO层使用EJB技术
+
+## Homework 6
+* 基于Homework 5
+* 数据访问层设计使用JPA EntityManager
+* Model的设计使用Entity Beans
+
+## Homerwork 7
+* 基于Homework 4
+* 数据访问层设计使用Hibernate Session
+* Model的设计使用Hibernate Entity Beans
+* Service层不使用EJB技术

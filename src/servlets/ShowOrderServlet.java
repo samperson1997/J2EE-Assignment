@@ -81,7 +81,7 @@ public class ShowOrderServlet extends HttpServlet {
         pageCount = (rowCount - 1) / pageSize + 1;
 
         List list = ServiceFactory.getOrderService().findOrder(String.valueOf(request.getAttribute("login")),
-                pageSize * pageNow - pageSize);
+                pageSize * pageNow - pageSize, pageSize);
 
         OrderListBean orderListBean = new OrderListBean();
         orderListBean.setOrderList(list);

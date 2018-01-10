@@ -6,5 +6,5 @@ public interface OrderDao {
 
     int findTotalOrder(String id);
 
-    List findOrder(String id, int start);
+    List findOrder(String id, int start, int pageSize);
 }
