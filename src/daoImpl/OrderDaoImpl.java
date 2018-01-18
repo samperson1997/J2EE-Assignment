@@ -5,21 +5,16 @@ import model.Order;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public class OrderDaoImpl implements OrderDao {
 
-    private static OrderDaoImpl orderDao = new OrderDaoImpl();
+    @Autowired
     private HibernateUtil hibernateUtil;
-
-    public OrderDaoImpl() {
-        hibernateUtil = new HibernateUtil();
-    }
-
-    public static OrderDaoImpl getInstance() {
-        return orderDao;
-    }
 
     @Override
     public int findTotalOrder(String id) {
@@ -42,8 +37,7 @@ public class OrderDaoImpl implements OrderDao {
 
         String hql = "SELECT * FROM user_orders WHERE user_id = " + id + " LIMIT " + start + ", " + pageSize;
         Query query = session.createNativeQuery(hql, Order.class);
-        List<Order> list = query.getResultList()
-                ;
+        List<Order> list = query.getResultList();
 
         tx.commit();
 

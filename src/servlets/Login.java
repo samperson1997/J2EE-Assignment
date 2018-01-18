@@ -1,6 +1,8 @@
 package servlets;
 
-import factory.ServiceFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import service.UserService;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -15,15 +17,12 @@ import java.io.IOException;
 public class Login extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public Login() {
-        super();
-    }
+    private static UserService userService;
+    private static ApplicationContext appliationContext;
 
     public void init() {
-
+        appliationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+        userService = (UserService) appliationContext.getBean("userService");
     }
 
     /**
@@ -52,7 +51,7 @@ public class Login extends HttpServlet {
         // match user and password
         boolean isCorrectPassword = false;
 
-        String correctPassword = ServiceFactory.getUserService().getPassword(String.valueOf(request.getParameter("login")));
+        String correctPassword = userService.getPassword(String.valueOf(request.getParameter("login")));
 
         if (null != correctPassword && correctPassword.equals(request.getParameter("password"))) {
             System.out.println("correct password");

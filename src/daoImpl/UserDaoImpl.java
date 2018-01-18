@@ -5,21 +5,16 @@ import model.User;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public class UserDaoImpl implements UserDao {
 
-    private static UserDaoImpl userDao = new UserDaoImpl();
+    @Autowired
     private HibernateUtil hibernateUtil;
-
-    public UserDaoImpl() {
-        hibernateUtil = new HibernateUtil();
-    }
-
-    public static UserDaoImpl getInstance() {
-        return userDao;
-    }
 
     @Override
     public String getPassword(String id) {

@@ -1,7 +1,9 @@
 package servlets;
 
-import factory.ServiceFactory;
 import model.OrderListBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import service.OrderService;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -20,14 +22,13 @@ import java.util.List;
 public class ShowOrderServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public ShowOrderServlet() {
-        super();
-    }
+    private static OrderService orderService;
+    private static ApplicationContext appliationContext;
 
     public void init() {
+        appliationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+        orderService = (OrderService) appliationContext.getBean("orderService");
+
     }
 
     /**
@@ -77,10 +78,10 @@ public class ShowOrderServlet extends HttpServlet {
         if (temp_pageNow != null) {
             pageNow = Integer.parseInt(temp_pageNow);
         }
-        int rowCount = ServiceFactory.getOrderService().findTotalOrder(String.valueOf(request.getAttribute("login")));
+        int rowCount = orderService.findTotalOrder(String.valueOf(request.getAttribute("login")));
         pageCount = (rowCount - 1) / pageSize + 1;
 
-        List list = ServiceFactory.getOrderService().findOrder(String.valueOf(request.getAttribute("login")),
+        List list = orderService.findOrder(String.valueOf(request.getAttribute("login")),
                 pageSize * pageNow - pageSize, pageSize);
 
         OrderListBean orderListBean = new OrderListBean();
